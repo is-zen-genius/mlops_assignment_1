@@ -8,11 +8,6 @@
 | **Repository** | [github.com/is-zen-genius/mlops_assignment_1](https://github.com/is-zen-genius/mlops_assignment_1) |
 | **Date**       | 2026-10-20                                                                                        |
 
-### Submission links
-
-- Project video: [GitHub video](https://github.com/is-zen-genius/mlops_assignment_1/blob/main/recordings/mlops_2025ae05040.mov)
-- Project video: [Google Drive folder](https://drive.google.com/drive/folders/1UO6gMZc_yPuTMv8h-T_kK07NyMYBEhN2)
-
 ---
 
 ## Table of contents
@@ -48,8 +43,10 @@ serve that model as a monitored, containerised, Kubernetes-deployed REST API.
 ## 2. Setup / install instructions
 
 ```bash
-git clone https://github.com/<your-username>/<your-repo>.git
-cd <your-repo>
+git clone https://github.com/ https://github.com/is-zen-genius/mlops_assignment_1.git
+
+cd mlops_assignment_1
+
 
 python3.12 -m venv .venv
 source .venv/bin/activate              # Windows: .venv\Scripts\activate
@@ -436,7 +433,7 @@ pre-filled example patient, and got back a real `200` from the running pods:
 ```
 
 `x-request-id` and all other response headers were produced live by the cluster-served API.
-*(screenshot captured live in this session — see `screenshots/README.md`.)*
+
 
 **5. Structured JSON logs, confirming the `LoadBalancer` actually spreads traffic across both
 pods** (the `200` landed on one pod, the `422` on the other):
@@ -528,7 +525,7 @@ Done: 131 accepted (200), 19 rejected/failed, target=http://192.168.64.2:8080
 successfully** — opened `http://localhost:9090/targets` (port-forwarded) in a browser:
 
 > `heart-risk-api (2/2 up)` — both `http://10.42.0.8x:8001/metrics` targets show state `UP`.
-> *(screenshot captured live in this session — see `screenshots/README.md`.)*
+>
 
 **Grafana: datasource + dashboard were auto-provisioned from the ConfigMaps, and the dashboard
 rendered with live data** — opened `http://localhost:3000/d/heart-risk-api-overview/...`
@@ -544,7 +541,6 @@ rendered with live data** — opened `http://localhost:3000/d/heart-risk-api-ove
 | Total requests served                       | **228**                                                              |
 | API pods reporting (via Prometheus targets) | **2**                                                                |
 
-*(screenshot captured live in this session — see `screenshots/README.md`.)*
 
 **Teardown — clean removal, verified:**
 
@@ -613,7 +609,7 @@ GitHub Actions UI, before any model is trained or any image is built.
 ├── models/                      # model.joblib, model_metadata.json, mlflow_model/
 ├── notebooks/01_exploratory_data_analysis.ipynb
 ├── reports/                     # this report, figures/, model_comparison.csv
-├── screenshots/, recordings/    # evidence for submission (see their README files)
+├── recordings/    # evidence for submission
 ├── scripts/                     # simulate_traffic.py, make_architecture_diagram.py, generate_report.py
 ├── src/                         # config, ingest, clean, features, train, package_model,
 │                                 # inference, schemas, metrics, logging_utils, main (FastAPI)
