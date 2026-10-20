@@ -1,0 +1,40 @@
+{
+  "model_family": "logistic_regression",
+  "best_params": "{'clf__C': 1, 'clf__class_weight': 'balanced'}",
+  "metrics": {
+    "cv_roc_auc": 0.9082,
+    "test_accuracy": 0.8689,
+    "test_precision": 0.8125,
+    "test_recall": 0.9286,
+    "test_f1": 0.8667,
+    "test_roc_auc": 0.9578
+  },
+  "features": {
+    "continuous": [
+      "age",
+      "trestbps",
+      "chol",
+      "thalach",
+      "oldpeak",
+      "ca"
+    ],
+    "binary": [
+      "sex",
+      "fbs",
+      "exang"
+    ],
+    "nominal": [
+      "cp",
+      "restecg",
+      "slope",
+      "thal"
+    ]
+  },
+  "target": "target",
+  "trained_at_utc": "2026-10-20T00:48:59+00:00",
+  "training_data_sha256": "d0021ed770110715",
+  "model_sha256": "06bc1b193983e7b7",
+  "python_version": "3.12.11",
+  "scikit_learn_version": "1.9.1",
+  "mlflow_version": "2.22.5"
+}

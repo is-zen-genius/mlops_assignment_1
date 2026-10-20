@@ -1,0 +1,15 @@
+# Headless (no cluster IP) so Prometheus' DNS service-discovery resolves one A record
+# per pod instead of a single load-balanced IP - every replica gets scraped individually.
+apiVersion: v1
+kind: Service
+metadata:
+  name: heart-risk-api-headless
+  namespace: heart-risk
+spec:
+  clusterIP: None
+  selector:
+    app: heart-risk-api
+  ports:
+    - name: http
+      port: 8001
+      targetPort: 8001

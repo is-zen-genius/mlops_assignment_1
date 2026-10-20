@@ -1,0 +1,21 @@
+# Environments
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+.ruff_cache/
+
+# Coverage
+.coverage
+htmlcov/
+pytest-report.xml
+ruff-report.txt
+
+.env
+
+# OS
+.DS_Store

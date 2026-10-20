@@ -1,0 +1,4 @@
+model_family,best_params,cv_roc_auc,test_accuracy,test_precision,test_recall,test_f1,test_roc_auc
+logistic_regression,"{'clf__C': 1, 'clf__class_weight': 'balanced'}",0.9082,0.8689,0.8125,0.9286,0.8667,0.9578
+random_forest,"{'clf__max_depth': None, 'clf__min_samples_leaf': 3, 'clf__n_estimators': 400}",0.901,0.8852,0.8387,0.9286,0.8814,0.9524
+gradient_boosting,"{'clf__learning_rate': 0.01, 'clf__max_depth': 2, 'clf__n_estimators': 200}",0.884,0.8852,0.8621,0.8929,0.8772,0.9448

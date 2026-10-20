@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: heart-risk-api
+  namespace: heart-risk
+  labels:
+    app: heart-risk-api
+spec:
+  type: LoadBalancer
+  selector:
+    app: heart-risk-api
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8001

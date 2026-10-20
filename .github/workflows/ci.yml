@@ -1,0 +1,127 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  lint:
+    name: Lint (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: pip install ruff==0.17.1
+      - name: Run ruff
+        run: ruff check src tests scripts --output-format=concise | tee ruff-report.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lint-report
+          path: ruff-report.txt
+
+  test:
+    name: Unit tests (pytest)
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - run: pip install -r requirements.txt
+      - name: Run pytest with coverage
+        run: pytest --junitxml=pytest-report.xml --cov=src --cov-report=xml --cov-report=term-missing
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-report
+          path: |
+            pytest-report.xml
+            coverage.xml
+
+  train:
+    name: Data pipeline + model training (MLflow)
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - run: pip install -r requirements.txt
+      - name: Download and clean the dataset
+        run: |
+          python src/ingest.py
+          python src/clean.py
+        working-directory: .
+        env:
+          PYTHONPATH: src
+      - name: Train + tune models (logged to MLflow)
+        run: python src/train.py
+        env:
+          PYTHONPATH: src
+      - name: Package the winning model
+        run: python src/package_model.py
+        env:
+          PYTHONPATH: src
+      - name: Smoke-test CLI inference
+        run: python src/inference.py data/sample_patient.json
+        env:
+          PYTHONPATH: src
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: training-artifacts
+          path: |
+            models/
+            reports/
+            mlruns/
+
+  docker:
+    name: Build + smoke-test the API image
+    needs: train
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: training-artifacts
+          path: .
+      - name: Build image
+        run: docker build -t heart-risk-api:ci .
+      - name: Run container
+        run: docker run -d --name heart-risk-api -p 8001:8001 heart-risk-api:ci
+      - name: Wait for the container to report healthy
+        run: |
+          for _ in $(seq 1 15); do
+            status=$(docker inspect --format='{{.State.Health.Status}}' heart-risk-api || echo starting)
+            [ "$status" = "healthy" ] && exit 0
+            sleep 2
+          done
+          echo "Container never became healthy" >&2
+          docker logs heart-risk-api
+          exit 1
+      - name: Call /health and /predict
+        run: |
+          curl -sf http://localhost:8001/health
+          curl -sf -X POST http://localhost:8001/predict \
+            -H "Content-Type: application/json" \
+            -d @data/sample_patient.json
+      - name: Container logs
+        if: always()
+        run: docker logs heart-risk-api
+      - name: Stop container
+        if: always()
+        run: docker rm -f heart-risk-api

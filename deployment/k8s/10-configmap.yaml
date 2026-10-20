@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: heart-risk-api-config
+  namespace: heart-risk
+data:
+  LOG_LEVEL: "INFO"
