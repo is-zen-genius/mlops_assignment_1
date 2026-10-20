@@ -6,7 +6,7 @@ cleaning, feature engineering, multi-model training with **MLflow** experiment t
 manifests (+ autoscaling), **Prometheus/Grafana** monitoring, and a 4-stage **GitHub Actions** CI
 pipeline (lint → test → train → docker build/smoke-test).
 
-> Built for AIMLCZG523 (MLOps) Assignment 1. See [reports/report.md](reports/report.md) /
+> Built for AIMLCZG523 (MLOps) Assignment 1. See 
 > [reports/MLOps_Assignment1_Report.docx](reports/MLOps_Assignment1_Report.docx) for the full
 > write-up with results, screenshots and the architecture diagram.
 
