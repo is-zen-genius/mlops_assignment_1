@@ -14,7 +14,7 @@ __pycache__/
 htmlcov/
 pytest-report.xml
 ruff-report.txt
-
+tracking.db
 .env
 
 # OS

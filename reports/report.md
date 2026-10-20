@@ -1,12 +1,17 @@
 # Heart Disease Risk Prediction — MLOps Assignment 1 Report
 
-|                      |                                                                                                    |
-| -------------------- | -------------------------------------------------------------------------------------------------- |
-| **Course**     | Machine Learning Operations (MLOps), AIMLCZG523                                                    |
-| **Assignment** | Assignment 1 — End-to-End ML Model Development, CI/CD, and Production Deployment                  |
-| **Author**     | Sibasis Mishra (2025AE05040)                                                                       |
-| **Repository** | [github.com/is-zen-genius/mlops_assignment_1](https://github.com/is-zen-genius/mlops_assignment_1)  |
-| **Date**       | 2026-10-20                                                                                         |
+|                      |                                                                                                   |
+| -------------------- | ------------------------------------------------------------------------------------------------- |
+| **Course**     | Machine Learning Operations (MLOps), AIMLCZG523                                                   |
+| **Assignment** | Assignment 1 — End-to-End ML Model Development, CI/CD, and Production Deployment                 |
+| **Author**     | Sibasis Mishra (2025AE05040)                                                                      |
+| **Repository** | [github.com/is-zen-genius/mlops_assignment_1](https://github.com/is-zen-genius/mlops_assignment_1) |
+| **Date**       | 2026-10-20                                                                                        |
+
+### Submission links
+
+- Project video: [GitHub video](https://github.com/is-zen-genius/mlops_assignment_1/blob/main/recordings/mlops_2025ae05040.mov)
+- Project video: [Google Drive folder](https://drive.google.com/drive/folders/1UO6gMZc_yPuTMv8h-T_kK07NyMYBEhN2)
 
 ---
 
@@ -469,8 +474,7 @@ Nothing was left behind, and the kubectl context was never pointed anywhere othe
   request id, method, path, status, latency, prediction, confidence) via a custom
   `logging.Formatter` — directly greppable/queryable, and the log level is controlled by the
   `LOG_LEVEL` env var (wired to the `heart-risk-api-config` ConfigMap in Kubernetes).
-- **Prometheus metrics** (`src/metrics.py`), exposed at `/metrics`:
-  | Metric                                      | Type      | Labels                   |
+- **Prometheus metrics** (`src/metrics.py`), exposed at `/metrics`:| Metric                                      | Type      | Labels                   |
   | ------------------------------------------- | --------- | ------------------------ |
   | `heart_api_http_requests_total`           | Counter   | `method, path, status` |
   | `heart_api_http_request_duration_seconds` | Histogram | `path`                 |

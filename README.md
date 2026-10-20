@@ -10,6 +10,11 @@ pipeline (lint → test → train → docker build/smoke-test).
 > [reports/MLOps_Assignment1_Report.docx](reports/MLOps_Assignment1_Report.docx) for the full
 > write-up with results, screenshots and the architecture diagram.
 
+### Submission links
+
+- Project video: [GitHub video](https://github.com/is-zen-genius/mlops_assignment_1/blob/main/recordings/mlops_2025ae05040.mov)
+- Project video: [Google Drive folder](https://drive.google.com/drive/folders/1UO6gMZc_yPuTMv8h-T_kK07NyMYBEhN2)
+
 ```
 UCI dataset -> ingest -> clean -> features -> train (MLflow) -> package -> FastAPI -> Docker -> Kubernetes
                                                                               |              |
@@ -55,11 +60,11 @@ UCI dataset -> ingest -> clean -> features -> train (MLflow) -> package -> FastA
 
 ## Prerequisites
 
-| Tool | Needed for | Notes |
-|---|---|---|
-| Python 3.12 | Option A (local) | `python3.12 -m venv .venv` |
-| Docker | Options B and C | Docker Desktop or any Docker engine |
-| kubectl + a cluster | Option C | Docker Desktop, Rancher Desktop, minikube or kind |
+| Tool                | Needed for       | Notes                                             |
+| ------------------- | ---------------- | ------------------------------------------------- |
+| Python 3.12         | Option A (local) | `python3.12 -m venv .venv`                      |
+| Docker              | Options B and C  | Docker Desktop or any Docker engine               |
+| kubectl + a cluster | Option C         | Docker Desktop, Rancher Desktop, minikube or kind |
 
 There is a **single `requirements.txt`** for the whole project (data/training, the FastAPI
 service, pytest/ruff, notebook execution, and the DOCX report generator). Local development,
@@ -67,11 +72,11 @@ the Docker image, and CI all install from this one file — nothing else to trac
 
 ## Quickstart — three ways to run this
 
-| | Command | What you get |
-|---|---|---|
-| **A. Local** | `pip install -r requirements.txt` then run the `src/*.py` scripts directly | Fastest inner loop; best for development, training, and the notebook |
-| **B. Docker** | `docker build` + `docker run` | The exact artifact CI builds; isolated, reproducible, no local Python needed to *run* it |
-| **C. Kubernetes** | `kubectl apply -f deployment/k8s/` | Production-like: 2 replicas, rolling updates, autoscaling, Prometheus/Grafana |
+|                         | Command                                                                        | What you get                                                                               |
+| ----------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| **A. Local**      | `pip install -r requirements.txt` then run the `src/*.py` scripts directly | Fastest inner loop; best for development, training, and the notebook                       |
+| **B. Docker**     | `docker build` + `docker run`                                              | The exact artifact CI builds; isolated, reproducible, no local Python needed to *run* it |
+| **C. Kubernetes** | `kubectl apply -f deployment/k8s/`                                           | Production-like: 2 replicas, rolling updates, autoscaling, Prometheus/Grafana              |
 
 Each option is self-contained below — pick whichever matches what you're trying to do.
 
@@ -159,8 +164,8 @@ for a real captured example of each failure mode.
 PYTHONPATH=src uvicorn main:app --app-dir src --host 0.0.0.0 --port 8001 --reload
 ```
 
-- Swagger UI: <http://localhost:8001/docs>
-- Health: <http://localhost:8001/health> · Metrics: <http://localhost:8001/metrics>
+- Swagger UI: [http://localhost:8001/docs](http://localhost:8001/docs)
+- Health: [http://localhost:8001/health](http://localhost:8001/health) · Metrics: [http://localhost:8001/metrics](http://localhost:8001/metrics)
 
 ```bash
 curl http://localhost:8001/health
@@ -227,12 +232,12 @@ docker stop heart-risk-api && docker rm heart-risk-api
 
 ### B.4 Docker troubleshooting
 
-| Symptom | Fix |
-|---|---|
-| `FileNotFoundError: models/model.joblib` during build | Run `python src/train.py && python src/package_model.py` first (Option A.3/A.4) |
-| Container exits immediately | `docker logs heart-risk-api` — almost always a missing/corrupt `models/model.joblib` |
-| `docker inspect ... Health.Status` stuck on `starting` | Wait for the 10s `--start-period`; if it never becomes `healthy`, check `docker logs` |
-| Port already in use | Another process (or a previous container) is on 8001 — `docker ps`, then `docker rm -f <name>`, or map a different host port: `-p 8002:8001` |
+| Symptom                                                    | Fix                                                                                                                                                 |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `FileNotFoundError: models/model.joblib` during build    | Run `python src/train.py && python src/package_model.py` first (Option A.3/A.4)                                                                   |
+| Container exits immediately                                | `docker logs heart-risk-api` — almost always a missing/corrupt `models/model.joblib`                                                           |
+| `docker inspect ... Health.Status` stuck on `starting` | Wait for the 10s `--start-period`; if it never becomes `healthy`, check `docker logs`                                                         |
+| Port already in use                                        | Another process (or a previous container) is on 8001 — `docker ps`, then `docker rm -f <name>`, or map a different host port: `-p 8002:8001` |
 
 ## Option C — run with Kubernetes
 
@@ -241,14 +246,14 @@ end-to-end on a local Rancher Desktop (k3s) cluster during development — see
 [reports/report.md](reports/report.md#9-production-deployment-kubernetes) for the full real
 command-by-command walkthrough with output.
 
-| File | Resource |
-|---|---|
-| `00-namespace.yaml` | Namespace `heart-risk` |
-| `10-configmap.yaml` | `LOG_LEVEL` env var for the API |
-| `20-deployment.yaml` | Deployment, 2 replicas, rolling update, probes, non-root, resource limits |
-| `30-service.yaml` | `LoadBalancer` Service, port **8080** → container port 8001 |
-| `35-service-headless.yaml` | Headless Service so Prometheus can discover every pod |
-| `40-hpa.yaml` | HorizontalPodAutoscaler, 2-5 replicas at 70% CPU (needs `metrics-server`) |
+| File                         | Resource                                                                    |
+| ---------------------------- | --------------------------------------------------------------------------- |
+| `00-namespace.yaml`        | Namespace `heart-risk`                                                    |
+| `10-configmap.yaml`        | `LOG_LEVEL` env var for the API                                           |
+| `20-deployment.yaml`       | Deployment, 2 replicas, rolling update, probes, non-root, resource limits   |
+| `30-service.yaml`          | `LoadBalancer` Service, port **8080** → container port 8001        |
+| `35-service-headless.yaml` | Headless Service so Prometheus can discover every pod                       |
+| `40-hpa.yaml`              | HorizontalPodAutoscaler, 2-5 replicas at 70% CPU (needs `metrics-server`) |
 
 ### C.1 Before you start
 
@@ -362,14 +367,14 @@ kubectl get all --all-namespaces | grep -iE 'heart-risk|grafana|prometheus'   # 
 
 ### C.9 Kubernetes troubleshooting
 
-| Symptom | Fix |
-|---|---|
-| `ErrImagePull` / `ImagePullBackOff` | The image isn't on the cluster node — load it (`minikube image load ...`, `kind load docker-image ...`) or push to a registry and update `deployment/k8s/20-deployment.yaml` |
-| Pods `Running` but not `Ready` | `kubectl describe pod -l app=heart-risk-api -n heart-risk` — readiness probe hits `/health` on port 8001 |
-| `localhost:8080` not reachable | Use `kubectl port-forward svc/heart-risk-api 8080:8080 -n heart-risk`, or check the real `EXTERNAL-IP` from `kubectl get all -n heart-risk` |
-| HPA shows `<unknown>/70%` | `metrics-server` isn't installed, or hasn't completed its first collection cycle yet (wait ~1 min) |
-| Grafana pod stuck in `ContainerCreating` | The `grafana-dashboards` ConfigMap or `grafana-admin-credentials` Secret is missing — see C.5 |
-| Prometheus target down/empty | Deploy the API first; check `kubectl get endpoints heart-risk-api-headless -n heart-risk` |
+| Symptom                                    | Fix                                                                                                                                                                                 |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ErrImagePull` / `ImagePullBackOff`    | The image isn't on the cluster node — load it (`minikube image load ...`, `kind load docker-image ...`) or push to a registry and update `deployment/k8s/20-deployment.yaml` |
+| Pods `Running` but not `Ready`         | `kubectl describe pod -l app=heart-risk-api -n heart-risk` — readiness probe hits `/health` on port 8001                                                                       |
+| `localhost:8080` not reachable           | Use `kubectl port-forward svc/heart-risk-api 8080:8080 -n heart-risk`, or check the real `EXTERNAL-IP` from `kubectl get all -n heart-risk`                                   |
+| HPA shows `<unknown>/70%`                | `metrics-server` isn't installed, or hasn't completed its first collection cycle yet (wait ~1 min)                                                                                |
+| Grafana pod stuck in `ContainerCreating` | The `grafana-dashboards` ConfigMap or `grafana-admin-credentials` Secret is missing — see C.5                                                                                  |
+| Prometheus target down/empty               | Deploy the API first; check `kubectl get endpoints heart-risk-api-headless -n heart-risk`                                                                                         |
 
 ## CI/CD
 
@@ -404,6 +409,7 @@ ruff check src tests scripts \
 ## API reference
 
 ### `GET /health`
+
 ```json
 {"status": "ok", "model_loaded": true}
 ```
@@ -412,27 +418,28 @@ ruff check src tests scripts \
 
 All 13 fields required, validated with Pydantic (`src/schemas.py`); invalid input → `422`.
 
-| Field | Type | Range | Meaning |
-|---|---|---|---|
-| `age` | int | 1–120 | Age in years |
-| `sex` | int | 0–1 | 1 = male, 0 = female |
-| `cp` | int | 1–4 | Chest pain type |
-| `trestbps` | int | 50–260 | Resting blood pressure (mm Hg) |
-| `chol` | int | 80–700 | Serum cholesterol (mg/dl) |
-| `fbs` | int | 0–1 | Fasting blood sugar > 120 mg/dl |
-| `restecg` | int | 0–2 | Resting ECG result |
-| `thalach` | int | 50–250 | Max heart rate achieved |
-| `exang` | int | 0–1 | Exercise-induced angina |
-| `oldpeak` | float | 0–10 | ST depression |
-| `slope` | int | 1–3 | Slope of peak exercise ST segment |
-| `ca` | int | 0–4 | Major vessels coloured |
-| `thal` | int | 3, 6 or 7 | 3 normal, 6 fixed defect, 7 reversible defect |
+| Field        | Type  | Range     | Meaning                                       |
+| ------------ | ----- | --------- | --------------------------------------------- |
+| `age`      | int   | 1–120    | Age in years                                  |
+| `sex`      | int   | 0–1      | 1 = male, 0 = female                          |
+| `cp`       | int   | 1–4      | Chest pain type                               |
+| `trestbps` | int   | 50–260   | Resting blood pressure (mm Hg)                |
+| `chol`     | int   | 80–700   | Serum cholesterol (mg/dl)                     |
+| `fbs`      | int   | 0–1      | Fasting blood sugar > 120 mg/dl               |
+| `restecg`  | int   | 0–2      | Resting ECG result                            |
+| `thalach`  | int   | 50–250   | Max heart rate achieved                       |
+| `exang`    | int   | 0–1      | Exercise-induced angina                       |
+| `oldpeak`  | float | 0–10     | ST depression                                 |
+| `slope`    | int   | 1–3      | Slope of peak exercise ST segment             |
+| `ca`       | int   | 0–4      | Major vessels coloured                        |
+| `thal`     | int   | 3, 6 or 7 | 3 normal, 6 fixed defect, 7 reversible defect |
 
 ```json
 {"prediction": 0, "label": "no disease", "confidence": 0.7999, "probability_disease": 0.2001}
 ```
 
 ### `GET /metrics`
+
 Prometheus text exposition format (`heart_api_*` counters/histograms).
 
 ## Results
@@ -441,21 +448,20 @@ Held-out test set (20%, stratified, `random_state=42`), ranked by cross-validate
 [reports/model_comparison.csv](reports/model_comparison.csv) and
 [reports/report.md](reports/report.md#12-results-summary) for the full table and plots:
 
-| Model | CV ROC-AUC | Test accuracy | Test ROC-AUC |
-|---|---|---|---|
-| **Logistic Regression** (selected) | **0.9082** | 0.8689 | 0.9578 |
-| Random Forest | 0.9010 | 0.8852 | 0.9524 |
-| Gradient Boosting | 0.8840 | 0.8852 | 0.9448 |
+| Model                                    | CV ROC-AUC       | Test accuracy | Test ROC-AUC |
+| ---------------------------------------- | ---------------- | ------------- | ------------ |
+| **Logistic Regression** (selected) | **0.9082** | 0.8689        | 0.9578       |
+| Random Forest                            | 0.9010           | 0.8852        | 0.9524       |
+| Gradient Boosting                        | 0.8840           | 0.8852        | 0.9448       |
 
 ## Troubleshooting
 
 General/local issues — see [B.4](#b4-docker-troubleshooting) for Docker-specific and
 [C.9](#c9-kubernetes-troubleshooting) for Kubernetes-specific troubleshooting.
 
-| Symptom | Fix |
-|---|---|
-| `ModuleNotFoundError` in tests | Run `pytest` from the project root so `pytest.ini`'s `pythonpath = src` applies |
+| Symptom                                                                 | Fix                                                                                                                                                                                                                                         |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ModuleNotFoundError` in tests                                        | Run `pytest` from the project root so `pytest.ini`'s `pythonpath = src` applies                                                                                                                                                       |
 | `ImportError: FallbackAsyncAdaptedQueuePool` from `sqlalchemy.pool` | SQLAlchemy 2.1+ isn't compatible with this MLflow version — already pinned to `SQLAlchemy==2.0.55` in `requirements.txt`; if you see this, re-install from the committed `requirements.txt` rather than installing mlflow separately |
-| MLflow UI shows no runs | Start it from the project root with `--backend-store-uri sqlite:///tracking.db` |
-| `FileNotFoundError: models/model.joblib` | Run `python src/train.py && python src/package_model.py` first (Option A.3/A.4) — needed before building the Docker image or deploying to Kubernetes |
-
+| MLflow UI shows no runs                                                 | Start it from the project root with `--backend-store-uri sqlite:///tracking.db`                                                                                                                                                           |
+| `FileNotFoundError: models/model.joblib`                              | Run `python src/train.py && python src/package_model.py` first (Option A.3/A.4) — needed before building the Docker image or deploying to Kubernetes                                                                                     |
